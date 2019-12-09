@@ -22,14 +22,22 @@ vertices = np.array([[200,200],
                      [200,200]])
 my_triangle = polygon.Polygon(vertices)
 
-for _ in range(0, FPS*seconds):
+for frameNum in range(0, FPS*seconds):
+    # draw the triangle
     my_canvas.draw(my_triangle)
-    frame = my_canvas.image
+    image = my_canvas.image
     
-    # my_triangle.translate(np.array([25,25]))
-    my_triangle.rotate(np.pi/12)
+    # transform the triangle object
+    if frameNum < FPS*seconds/3:
+        my_triangle.translate(np.array([2,2]))
+    elif frameNum < FPS*seconds*2/3:
+        my_triangle.rotate(np.pi/12)
+    else:
+        my_triangle.scale(0.9)
+
+    # blank canvas to redraw the triangle in its new state
     my_canvas.image = np.array(my_canvas.background)
 
-    video.write(frame)
+    video.write(image)
 
 video.release()
