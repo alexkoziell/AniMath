@@ -46,6 +46,25 @@ def on_draw():
     )
     square_vertices.draw(pyglet.gl.GL_TRIANGLES)
 
+    octahedron_vertices = pyglet.graphics.vertex_list_indexed(6,
+        [0,1,2, 0,2,3, 0,3,4, 0,4,1,
+         5,1,2, 5,2,3, 5,3,4, 5,4,1],
+        ('v3i', (200, 300, -1,
+                 200, 200, 0,
+                 300, 200, -1,
+                 200, 200, -2,
+                 100, 200, -1,
+                 200, 100, -1)),
+        ('c3B', (0, 0, 255,
+                 0, 255, 0,
+                 255, 255, 0,
+                 0, 255, 255,
+                 255, 255, 255,
+                 255, 0, 0))
+    )
+    octahedron_vertices.draw(pyglet.gl.GL_TRIANGLES)
+
+    pygl.glLineWidth(10.0)
     line_vertices = pyglet.graphics.vertex_list(2,
         ('v2i', (10, 100,
                  15, 200)),
