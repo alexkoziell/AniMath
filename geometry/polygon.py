@@ -1,4 +1,5 @@
 import numpy as np
+import pyglet
 
 class Polygon():
 
@@ -6,9 +7,9 @@ class Polygon():
         # vertices are a numpy array where each row is the coordinates of one vertex
         self.vertices = vertices
         # average coordinate gives center
-        # but the last coordinate is the same as the first to close the polygon, so is ommitted
-        self.center = np.average(vertices[:-1], axis=0)
+        self.center = np.average(vertices, axis=0)
 
+    """ TRANFORMATIONS """
     def translate(self, vector):
         # numpy adds vector to each row in vertices when used as follows
         self.vertices += vector
@@ -41,3 +42,17 @@ class Polygon():
     def rotationMatrix(angle):
         return np.array([[np.cos(angle), -np.sin(angle)],
                            [np.sin(angle), np.cos(angle)]])
+
+
+    """ RENDERING """
+    def draw(self):
+        # uses pyglet to render a GL_LINE_LOOP through the vertices
+        
+        gl_vertices = tuple(self.vertices.flatten().tolist())
+        n_vertices = int(len(gl_vertices)/2)
+
+        polygon_vertices = pyglet.graphics.vertex_list(
+        3,
+        ('v2i', gl_vertices)
+        )
+        polygon_vertices.draw(pyglet.gl.GL_LINE_LOOP)

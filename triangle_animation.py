@@ -1,9 +1,11 @@
-import cv2
 import numpy as np
-from cv2 import VideoWriter, VideoWriter_fourcc
+import pyglet
+import pyglet.gl.gl as pygl
+
 import subprocess as sp
 
-import canvas
+import sys
+sys.path.append('geometry')
 import polygon
 
 width  = 1080
@@ -14,48 +16,42 @@ seconds = 5
 
 FFMPEG_BIN = 'ffmpeg'
 
+FFMPEG_BIN = 'ffmpeg'
 command = [ FFMPEG_BIN,
         '-y', # (optional) overwrite output file if it exists
         '-f', 'rawvideo',
         '-vcodec','rawvideo',
-        '-s', '1080x720', # size of one frame
+        '-s', '%dx%d' %(width, height), # size of one frame
         '-pix_fmt', 'rgb24',
         '-r', '24', # frames per second
         '-i', '-', # The imput comes from a pipe
+        '-vf', 'transpose=cclock_flip,transpose=cclock', # flips openGl output the right way up
         '-an', # Tells FFMPEG not to expect any audio
         '-vcodec', 'mpeg4',
-        'my_output_videofile.mp4' ]
+        'triangle_pyglet.mp4' ]
 
 pipe = sp.Popen( command, stdin=sp.PIPE, stderr=sp.PIPE)
 
-# fourcc = VideoWriter_fourcc(*'mp4v')
-# video  = VideoWriter('./triangle.mp4', fourcc, float(FPS), (width, height))
-
-my_canvas = canvas.Canvas(width, height)
-
 vertices = np.array([[200,200],
                      [300,300],
-                     [400,200],
-                     [200,200]])
+                     [400,200]])
 my_triangle = polygon.Polygon(vertices)
 
-for frameNum in range(0, FPS*seconds):
-    # blank canvas to redraw the triangle in its new state
-    my_canvas.image = np.array(my_canvas.background)
+window = pyglet.window.Window(width=width, height=height)
 
-    # draw the triangle
-    my_canvas.draw(my_triangle)
-    image = my_canvas.image
-    
-    # transform the triangle object
-    if frameNum < FPS*seconds/3:
-        my_triangle.translate(np.array([2,2]))
-    elif frameNum < FPS*seconds*2/3:
-        my_triangle.rotate(np.pi/12)
-    else:
-        my_triangle.scale(0.9)
+@window.event
+def on_draw():
+    window.clear()
+    # simple frontend, see Polygon class for backend
+    my_triangle.draw()
 
-    pipe.stdin.write( image.tostring() )
-    #video.write(image)
+def write_to_video(dt):
+    buffer = ( pygl.GLubyte * (3*window.width*window.height) )(0)
+    pygl.glReadPixels(0, 0, width, height, pygl.GL_RGB, 
+                         pygl.GL_UNSIGNED_BYTE, buffer)
+    pipe.stdin.write(buffer)
 
-#video.release()
+pyglet.clock.schedule_interval(write_to_video, 0.01)
+
+if __name__ == "__main__":
+    pyglet.app.run()
