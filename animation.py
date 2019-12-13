@@ -6,7 +6,7 @@ import subprocess as sp
 
 import sys
 sys.path.append('geometry')
-import polygon
+import shape
 
 width  = 1080
 height = 720
@@ -28,14 +28,18 @@ command = [ FFMPEG_BIN,
         '-vf', 'transpose=cclock_flip,transpose=cclock', # flips openGl output the right way up
         '-an', # Tells FFMPEG not to expect any audio
         '-vcodec', 'mpeg4',
-        'triangle_pyglet.mp4' ]
+        'output_videos/rotating_triangle.mp4' ]
 
 pipe = sp.Popen( command, stdin=sp.PIPE, stderr=sp.PIPE)
 
 vertices = np.array([[200,200],
                      [300,300],
                      [400,200]])
-my_triangle = polygon.Polygon(vertices)
+my_triangle = shape.Polygon(vertices)
+
+center = np.asarray([500, 500])
+radius = 200
+my_circle = shape.Circle(center, radius)
 
 window = pyglet.window.Window(width=width, height=height)
 
@@ -44,6 +48,7 @@ def on_draw():
     window.clear()
     # simple frontend, see Polygon class for backend
     my_triangle.draw()
+    my_circle.draw()
 
 def write_to_video(dt):
     buffer = ( pygl.GLubyte * (3*window.width*window.height) )(0)
@@ -51,7 +56,11 @@ def write_to_video(dt):
                          pygl.GL_UNSIGNED_BYTE, buffer)
     pipe.stdin.write(buffer)
 
-pyglet.clock.schedule_interval(write_to_video, 0.01)
+def rotate_triangle(dt):
+    my_triangle.rotate(0.02)
+
+pyglet.clock.schedule_interval(rotate_triangle, 1/24.0)
+pyglet.clock.schedule_interval(write_to_video, 1/24.0)
 
 if __name__ == "__main__":
     pyglet.app.run()
