@@ -22,6 +22,7 @@ center = np.asarray([500, 500])
 my_circle = shape.Circle(center, radius=100)
 
 interpolate.superImpose(my_triangle, my_circle)
+interpolate.addVertices(my_triangle, 2)
 
 """ PYGLET """
 def setupPyglet():
@@ -38,14 +39,14 @@ def setupPyglet():
         buffer = ( pygl.GLubyte * (3*window.width*window.height) )(0)
         pygl.glReadPixels(0, 0, width, height, pygl.GL_RGB, 
                             pygl.GL_UNSIGNED_BYTE, buffer)
-        if isRecording:
-            pipe.stdin.write(buffer)
+        pipe.stdin.write(buffer)
 
     def rotate_triangle(dt):
         my_triangle.rotate(0.02)
 
-    pyglet.clock.schedule_interval(rotate_triangle, 1/24.0)
-    pyglet.clock.schedule_interval(write_to_video, 1/24.0)
+    # pyglet.clock.schedule_interval(rotate_triangle, 1/24.0)
+    if isRecording:
+        pyglet.clock.schedule_interval(write_to_video, 1/24.0)
 
 
 """ SETUP """
