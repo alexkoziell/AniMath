@@ -7,7 +7,7 @@ import subprocess as sp
 
 import sys
 sys.path.append('geometry')
-import shape
+import shape, interpolate
 
 """ PARAMETERS """
 isRecording = False
@@ -15,11 +15,13 @@ outfile = None
 width, height = 1080, 720
 
 """ SOME SHAPES... """
-vertices = np.array([[200,200],[300,300],[400,200]])
+vertices = np.array([[200,200],[300,300],[400,200]], dtype=np.float64)
 my_triangle = shape.Polygon(vertices)
 
 center = np.asarray([500, 500])
 my_circle = shape.Circle(center, radius=100)
+
+interpolate.superImpose(my_triangle, my_circle)
 
 """ PYGLET """
 def setupPyglet():
@@ -87,7 +89,6 @@ def askToContinue():
 if __name__ == "__main__":
     args = parser.parse_args()
     outfile = args.outfile
-    print(outfile)
 
     if outfile is not None:
         isRecording = setupFFMPEG(width, height, outfile)
