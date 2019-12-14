@@ -65,10 +65,9 @@ class Circle(Shape):
     def __init__(self, center, radius, n_vertices=100):
         self.center = center
 
+        # n_vertices determines the number of lines used to render the circle
         self.vertices = np.asarray([])
         for angle in np.linspace(0, 2*np.pi, n_vertices):
             point = center + radius*np.asarray([np.cos(angle), np.sin(angle)])
             self.vertices = np.append(self.vertices, point)
         self.vertices = self.vertices.reshape(n_vertices, 2)
-        print(self.vertices)
-            
