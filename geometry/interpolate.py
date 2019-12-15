@@ -1,5 +1,7 @@
 import numpy as np
+import scipy.optimize
 from shape import Shape
+import hungarian
 
 def superImpose(shape1: Shape, shape2: Shape):
     """ Superimposes shape1 onto shape 2, without rotation or scaling. """
@@ -27,53 +29,8 @@ def shapeInterpolation(shape1: Shape, shape2: Shape):
             pairWiseDist[n,m] = np.linalg.norm(shape1.vertices[n] - shape2.vertices[m])
 
     # Hungarian Algorithm
-    costMatrix = pairWiseDist # Abstract awaaaay 0_¬
-    costMatrix = costMatrix - np.reshape(costMatrix.min(axis=1), (N, 1)) # subtract minimum of every row
-    costMatrix = costMatrix - costMatrix.min(axis=0)                     # and minimum of every column
-    print(costMatrix)
-
-    # Find minimum lines to cover zeros
-    maxZeros = np.empty((N,N))
-    for n in range(N):
-        for m in range(N):
-            rowZeros = sum(x==0 for x in costMatrix[n,:])
-            colZeros = sum(y==0 for y in costMatrix[:,m])
-            maxZeros[n,m] = colZeros - rowZeros
-            if costMatrix[n,m] == 0 and rowZeros == 1 and colZeros == 1:
-                maxZeros[n,m] = 1
-    print(maxZeros)
-
-    lines = np.zeros((N,N))
-    numLines = 0
-    for n in range(N):
-        for m in range(N):
-            if costMatrix[n,m] == 0:
-                if maxZeros[n,m] > 0:
-                    for i in range(N):
-                        maxZeros[i,m] = 0
-                        lines[i,m] = 1
-                    numLines += 1
-                elif maxZeros[n,m] < 0:
-                    for j in range(N):
-                        maxZeros[n,j] = 0
-                        lines[n,j] = 1
-                    numLines += 1
-    print(lines)
-    print(numLines)
-
-    # If numLines < N
-
-    # Assign one zero per row and column as a list of (shape1_index, shape2_index)
-    # pairs = []
-    # for n in range(N):
-    #     for m in range(N):
-    #         if costMatrix[n,m] == 0:
-
-
-    
-
-
-
+    sourceIndices, destIndices = scipy.optimize.linear_sum_assignment(pairWiseDist)
+    print(sourceIndices, destIndices)
 
     # interpolate shape1 vertices to shape 2 vertices
     # clean up by turning shape 1 into shape 2 if shape 2 had fewer vertices
