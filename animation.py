@@ -21,9 +21,8 @@ my_triangle = shape.Polygon(vertices)
 center = np.asarray([500, 500])
 my_circle = shape.Circle(center, radius=100)
 
-interpolate.superImpose(my_triangle, my_circle)
-interpolate.addVertices(my_triangle, 2)
-interpolate.shapeInterpolation(my_triangle, my_circle)
+centerPath = interpolate.centerInterpolation(my_triangle, my_circle)
+morphPaths = interpolate.shapeInterpolation(my_triangle, my_circle)
 
 """ PYGLET """
 def setupPyglet():
@@ -45,7 +44,13 @@ def setupPyglet():
     def rotate_triangle(dt):
         my_triangle.rotate(0.02)
 
+    def morph(dt):
+        alpha = 0.01
+        interpolate.interpolateVertices(my_triangle.vertices, morphPaths, alpha)
+        interpolate.interpolateVertices(my_triangle.vertices, centerPath, alpha)
+
     # pyglet.clock.schedule_interval(rotate_triangle, 1/24.0)
+    pyglet.clock.schedule_interval(morph, 1/24.0)
     if isRecording:
         pyglet.clock.schedule_interval(write_to_video, 1/24.0)
 

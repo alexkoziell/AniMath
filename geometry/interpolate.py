@@ -1,11 +1,13 @@
+from copy import deepcopy
 import numpy as np
 import scipy.optimize
-from shape import Shape
-import hungarian
 
-def superImpose(shape1: Shape, shape2: Shape):
+from shape import Shape
+import munkres
+
+def centerInterpolation(shape1: Shape, shape2: Shape, alpha=1):
     """ Superimposes shape1 onto shape 2, without rotation or scaling. """
-    shape1.translate(shape2.center-shape1.center)
+    return shape2.center-shape1.center
 
 def shapeInterpolation(shape1: Shape, shape2: Shape):
     """ Transforms shape1 into shape2. """
@@ -20,20 +22,32 @@ def shapeInterpolation(shape1: Shape, shape2: Shape):
     assert shape1.vertices.size == shape2.vertices.size
     N = int(shape1.vertices.size/2)
 
+    # copy shape1 to calculate vertex paths. We can then make a gradual transformation
+    # in a separate function
+    shape1Copy = deepcopy(shape1)
+    shape1Copy.translate(centerInterpolation(shape1, shape2))
+
     # match them between shapes
     # compute pair-wise distance matrix
     pairWiseDist = np.empty((N,N))
     for n in range(N):
         for m in range(N):
             # rows for shape 1 vertex
-            pairWiseDist[n,m] = np.linalg.norm(shape1.vertices[n] - shape2.vertices[m])
+            pairWiseDist[n,m] = np.linalg.norm(shape1Copy.vertices[n] - shape2.vertices[m])
 
-    # Hungarian Algorithm
+    # Munkres (Hungarian) Algorithm
     sourceIndices, destIndices = scipy.optimize.linear_sum_assignment(pairWiseDist)
-    print(sourceIndices, destIndices)
 
     # interpolate shape1 vertices to shape 2 vertices
-    # clean up by turning shape 1 into shape 2 if shape 2 had fewer vertices
+    paths = np.empty((N,2))
+    for srcIdx, vertex in enumerate(shape1.vertices):
+        destIdx = destIndices[srcIdx]
+        paths[srcIdx] = shape2.vertices[destIdx] - shape1Copy.vertices[srcIdx]
+
+    return paths
+
+def interpolateVertices(vertices, paths, alpha=1):
+    vertices += alpha*paths
 
 def addVertices(shape: Shape, N: int):
     """ Adds evenly distributed vertices along the edges of the shape. """
