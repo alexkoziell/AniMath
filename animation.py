@@ -23,6 +23,7 @@ my_circle = shape.Circle(center, radius=100)
 
 interpolate.superImpose(my_triangle, my_circle)
 interpolate.addVertices(my_triangle, 2)
+interpolate.shapeInterpolation(my_triangle, my_circle)
 
 """ PYGLET """
 def setupPyglet():

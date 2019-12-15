@@ -62,7 +62,7 @@ class Polygon(Shape):
 
 class Circle(Shape):
 
-    def __init__(self, center, radius, n_vertices=100):
+    def __init__(self, center, radius, n_vertices=5):
         self.center = center
 
         # n_vertices determines the number of lines used to render the circle
