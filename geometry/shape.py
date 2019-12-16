@@ -10,17 +10,20 @@ class Shape():
     """ RENDERING """
     def draw(self):
         # uses pyglet to render a GL_LINE_LOOP through the vertices
-        
-        int_vertices = self.vertices.astype(int)
-        gl_vertices = tuple(int_vertices.flatten().tolist())
-        n_vertices = int(len(gl_vertices)/2)
 
-        polygon_vertices = pyglet.graphics.vertex_list(
-        n_vertices,
-        ('v2i', gl_vertices),
-        ('c3B', self.color*n_vertices)
-        )
-        polygon_vertices.draw(pyglet.gl.GL_LINE_LOOP)
+        try:
+            int_vertices = self.vertices.astype(int)
+            gl_vertices = tuple(int_vertices.flatten().tolist())
+            n_vertices = int(len(gl_vertices)/2)
+
+            polygon_vertices = pyglet.graphics.vertex_list(
+            n_vertices,
+            ('v2i', gl_vertices),
+            ('c3B', self.color*n_vertices)
+            )
+            polygon_vertices.draw(pyglet.gl.GL_LINE_LOOP)
+        except:
+            pass
 
     """ TRANFORMATIONS """
     def translate(self, vector):

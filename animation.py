@@ -38,9 +38,9 @@ class Morph(Animation):
         self.toCompletion -= self.alpha
 
     def stop(self, dt):
-        self.srcShape.vertices = self.dstShape.vertices
-        self.srcShape.center   = self.dstShape.center
-        self.srcShape.color    = self.dstShape.color
+        self.srcShape.vertices = None
+        self.srcShape.center   = None
+        self.srcShape.color    = None
         super().stop(dt)
 
     

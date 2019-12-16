@@ -24,28 +24,30 @@ def setupAnimation():
     global my_triangle
     my_triangle = shape.Polygon(triangle_vertices, color=colors.RED)
 
-    square_vertices = np.array([[665,195],[805,195],[805,335],[665,335]], dtype=np.float64)
-    global my_square
-    my_square = shape.Polygon(square_vertices, color=colors.BLUE)
-
     center = np.asarray([500, 500], dtype=np.float64)
     global my_circle
     my_circle = shape.Circle(center, color=colors.GREEN, radius=100)
 
+    square_vertices = np.array([[665,195],[805,195],[805,335],[665,335]], dtype=np.float64)
+    global my_square
+    my_square = shape.Polygon(square_vertices, color=colors.BLUE)
+
+
     # Animate them!
-    animation.Morph(1, 4,   my_triangle, my_square)
-    animation.Morph(4, 6.5, my_square,  my_circle)
+    animation.Morph(1, 4,   my_triangle, my_circle)
+    animation.Morph(4, 6.5, my_circle,  my_square)
 
 """ PYGLET """
 def setupPyglet():
     window = pyglet.window.Window(width=width, height=height)
-    pygl.glLineWidth(2)
+    pygl.glClearColor(0.05, 0.04, 0.04, 1)
+    pygl.glLineWidth(3)
+    clock = pyglet.clock.Clock()
 
     def on_draw(dt):
         window.clear()
-
         my_triangle.draw()
-        my_square.draw()
+        my_square.draw()        
         my_circle.draw()
 
     def write_to_video(dt):
