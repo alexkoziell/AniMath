@@ -1,106 +1,43 @@
-import numpy as np
 import pyglet
-import pyglet.gl.gl as pygl
-
-import argparse
-import subprocess as sp
 
 import sys
 sys.path.append('geometry')
-import shape, interpolate
+from geometry.shape import Shape
+from geometry import interpolate
 
-""" PARAMETERS """
-isRecording = False
-outfile = None
-width, height = 1080, 720
+class Animation():
+    def __init__(self, start, end):
+        self.start = start
+        self.end   = end
+        self.duration = end-start
+        self.toCompletion = 1.0 # fraction left to completion
+        pyglet.clock.schedule_once(self.begin, start)
+        pyglet.clock.schedule_once(self.stop, end)
 
-""" SOME SHAPES... """
-vertices = np.array([[200,200],[300,300],[400,200]], dtype=np.float64)
-my_triangle = shape.Polygon(vertices)
-
-center = np.asarray([500, 500])
-my_circle = shape.Circle(center, radius=100)
-
-centerPath = interpolate.centerInterpolation(my_triangle, my_circle)
-morphPaths = interpolate.shapeInterpolation(my_triangle, my_circle)
-
-""" PYGLET """
-def setupPyglet():
-    window = pyglet.window.Window(width=width, height=height)
-
-    @window.event
-    def on_draw():
-        window.clear()
-        # simple frontend, see Polygon class for backend
-        my_triangle.draw()
-        my_circle.draw()
-
-    def write_to_video(dt):
-        buffer = ( pygl.GLubyte * (3*window.width*window.height) )(0)
-        pygl.glReadPixels(0, 0, width, height, pygl.GL_RGB, 
-                            pygl.GL_UNSIGNED_BYTE, buffer)
-        pipe.stdin.write(buffer)
-
-    def rotate_triangle(dt):
-        my_triangle.rotate(0.02)
-
-    def morph(dt):
-        alpha = 0.01
-        interpolate.interpolateVertices(my_triangle.vertices, morphPaths, alpha)
-        interpolate.interpolateVertices(my_triangle.vertices, centerPath, alpha)
-
-    # pyglet.clock.schedule_interval(rotate_triangle, 1/24.0)
-    pyglet.clock.schedule_interval(morph, 1/24.0)
-    if isRecording:
-        pyglet.clock.schedule_interval(write_to_video, 1/24.0)
-
-
-""" SETUP """
-parser = argparse.ArgumentParser(description="Create a Math Animation.")
-parser.add_argument('-o', '--outfile', type=str )
-
-def setupFFMPEG(width, height, fileName):
-    FFMPEG_BIN = 'ffmpeg'
-
-    FFMPEG_BIN = 'ffmpeg'
-    command = [ FFMPEG_BIN,
-            '-y', # (optional) overwrite output file if it exists
-            '-f', 'rawvideo',
-            '-vcodec','rawvideo',
-            '-s', '%dx%d' %(width, height), # size of one frame
-            '-pix_fmt', 'rgb24',
-            '-r', '24', # frames per second
-            '-i', '-', # The imput comes from a pipe
-            '-vf', 'transpose=cclock_flip,transpose=cclock', # flips openGl output the right way up
-            '-an', # Tells FFMPEG not to expect any audio
-            '-vcodec', 'mpeg4',
-            'output_videos/%s.mp4' % fileName ]
-
-    global pipe 
-    pipe = sp.Popen( command, stdin=sp.PIPE, stderr=sp.PIPE)
-    print("Animation is recording.")
-
-    return True
-
-def askToContinue():
-    shouldContinue = str(input("Animation is not recording, continue? (y/n) "))
-    if shouldContinue.lower() == 'y':
+    def animateFunc(self, dt):
         pass
-    elif shouldContinue.lower() == 'n':
-        sys.exit("Animation aborted.")
-    else:
-        askToContinue()
 
+    def begin(self, dt):
+        pyglet.clock.schedule_interval(self.animateFunc, 1/24)
 
+    def stop(self, dt):
+        pyglet.clock.unschedule(self.animateFunc)
+        
+class Morph(Animation):
+    def __init__(self, start, end, srcShape: Shape, dstShape: Shape):
+        super().__init__(start, end)
+        self.srcShape = srcShape
+        self.dstShape = dstShape
+        self.vertexPaths = interpolate.shapeInterpolation(srcShape, dstShape)\
+                         + interpolate.centerInterpolation(srcShape, dstShape)
+        self.alpha = 1/(24*self.duration)
 
-if __name__ == "__main__":
-    args = parser.parse_args()
-    outfile = args.outfile
+    def animateFunc(self, dt):
+        interpolate.interpolateVertices(self.srcShape.vertices, self.vertexPaths, self.alpha)
+        self.toCompletion -= self.alpha
 
-    if outfile is not None:
-        isRecording = setupFFMPEG(width, height, outfile)
-    else:
-        askToContinue()
+    def stop(self, dt):
+        self.srcShape.vertices = self.dstShape.vertices
+        super().stop(dt)
 
-    setupPyglet()
-    pyglet.app.run()
+    
