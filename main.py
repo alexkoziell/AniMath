@@ -19,7 +19,7 @@ width, height = 1080, 720
 """ ANIMATION """
 def setupAnimation():
     # Some shapes
-    triangle_vertices = np.array([[200,200],[300,341],[400,200]], dtype=np.float64)
+    triangle_vertices = np.array([[200,200],[400,200],[300,341]], dtype=np.float64)
     # triangle_color
     global my_triangle
     my_triangle = shape.Polygon(triangle_vertices, color=colors.RED)

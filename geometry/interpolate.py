@@ -41,7 +41,7 @@ def shapeInterpolation(shape1: Shape, shape2: Shape):
     # interpolate shape1 vertices to shape 2 vertices
     paths = np.empty((N,2))
     for srcIdx, vertex in enumerate(shape1.vertices):
-        destIdx = destIndices[srcIdx]
+        destIdx = int(destIndices[0] + srcIdx) % len(destIndices) # destIndices[srcIdx]
         paths[srcIdx] = shape2.vertices[destIdx] - shape1Copy.vertices[srcIdx]
 
     return paths
