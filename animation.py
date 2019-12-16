@@ -1,3 +1,4 @@
+from copy import deepcopy
 import pyglet
 
 import sys
@@ -38,6 +39,8 @@ class Morph(Animation):
 
     def stop(self, dt):
         self.srcShape.vertices = self.dstShape.vertices
+        self.srcShape.center   = self.dstShape.center
+        self.srcShape.color    = self.dstShape.color
         super().stop(dt)
 
     

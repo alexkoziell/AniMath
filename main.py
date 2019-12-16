@@ -8,7 +8,8 @@ import subprocess as sp
 import sys
 sys.path.append('geometry')
 import animation
-import shape, interpolate
+import colors
+import interpolate, shape
 
 """ PARAMETERS """
 isRecording = False
@@ -19,20 +20,21 @@ width, height = 1080, 720
 def setupAnimation():
     # Some shapes
     triangle_vertices = np.array([[200,200],[300,341],[400,200]], dtype=np.float64)
+    # triangle_color
     global my_triangle
-    my_triangle = shape.Polygon(triangle_vertices)
+    my_triangle = shape.Polygon(triangle_vertices, color=colors.RED)
 
     square_vertices = np.array([[665,195],[805,195],[805,335],[665,335]], dtype=np.float64)
     global my_square
-    my_square = shape.Polygon(square_vertices)
+    my_square = shape.Polygon(square_vertices, color=colors.BLUE)
 
-    center = np.asarray([500, 500])
+    center = np.asarray([500, 500], dtype=np.float64)
     global my_circle
-    my_circle = shape.Circle(center, radius=100)
+    my_circle = shape.Circle(center, color=colors.GREEN, radius=100)
 
     # Animate them!
-    animation.Morph(1, 4,   my_triangle, my_circle)
-    animation.Morph(2, 4.5, my_square,   my_circle)
+    animation.Morph(1, 4,   my_triangle, my_square)
+    animation.Morph(4, 6.5, my_square,  my_circle)
 
 """ PYGLET """
 def setupPyglet():
@@ -42,7 +44,6 @@ def setupPyglet():
     def on_draw(dt):
         window.clear()
 
-        # simple frontend, see Polygon class for backend
         my_triangle.draw()
         my_square.draw()
         my_circle.draw()
