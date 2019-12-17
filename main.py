@@ -10,6 +10,8 @@ sys.path.append('geometry')
 import animation
 import colors
 import interpolate, shape
+sys.path.append('image')
+import image
 
 """ PARAMETERS """
 isRecording = False
@@ -32,16 +34,22 @@ def setupAnimation():
     global my_square
     my_square = shape.Polygon(square_vertices, color=colors.BLUE)
 
-
     # Animate them!
     animation.Morph(1, 4,   my_triangle, my_circle)
     animation.Morph(4, 6.5, my_circle,  my_square)
+
+    # Some text
+    global continuity
+    continuity = image.Image('image/continuity.png', x=50, y=height-150, start=1, end=6.5)
 
 """ PYGLET """
 def setupPyglet():
     window = pyglet.window.Window(width=width, height=height)
     pygl.glClearColor(0.05, 0.04, 0.04, 1)
     pygl.glLineWidth(3)
+    pygl.glEnable(pygl.GL_BLEND)
+    pygl.glBlendFunc(pygl.GL_SRC_ALPHA, pygl.GL_ONE_MINUS_SRC_ALPHA)
+
     clock = pyglet.clock.Clock()
 
     def on_draw(dt):
@@ -49,6 +57,7 @@ def setupPyglet():
         my_triangle.draw()
         my_square.draw()        
         my_circle.draw()
+        continuity.sprite.draw()
 
     def write_to_video(dt):
         buffer = ( pygl.GLubyte * (3*window.width*window.height) )(0)
