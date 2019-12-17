@@ -17,6 +17,7 @@ import image
 isRecording = False
 outfile = None
 width, height = 1080, 720
+elapsedTime = 0
 
 """ ANIMATION """
 def setupAnimation():
@@ -50,14 +51,20 @@ def setupPyglet():
     pygl.glEnable(pygl.GL_BLEND)
     pygl.glBlendFunc(pygl.GL_SRC_ALPHA, pygl.GL_ONE_MINUS_SRC_ALPHA)
 
-    clock = pyglet.clock.Clock()
-
     def on_draw(dt):
         window.clear()
-        my_triangle.draw()
-        my_square.draw()        
-        my_circle.draw()
+
+        global elapsedTime
+        if elapsedTime < 4:
+            my_triangle.draw()
+        elif 4 < elapsedTime < 6.6:
+            my_circle.draw()        
+        else:
+            my_square.draw()
+        
         continuity.sprite.draw()
+
+        elapsedTime += dt
 
     def write_to_video(dt):
         buffer = ( pygl.GLubyte * (3*window.width*window.height) )(0)
