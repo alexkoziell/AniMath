@@ -15,19 +15,17 @@ class Geometry():
     
     """ RENDERING """
     def draw(self, drawType):
-        # uses pyglet to render a GL_LINE_LOOP through the vertices
-
         try:
             int_vertices = self.vertices.astype(int)
             gl_vertices = tuple(int_vertices.flatten().tolist())
             n_vertices = int(len(gl_vertices)/2)
 
-            vertex_list = pyglet.graphics.vertex_list(
+            vertex_list = pyglet.graphics.draw(
             n_vertices,
+            drawType,
             ('v2i', gl_vertices),
             ('c3B', self.color*n_vertices)
             )
-            vertex_list.draw(drawType)
         except:
             pass
 

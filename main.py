@@ -13,7 +13,7 @@ import interpolate, shape
 sys.path.append('image')
 import image
 sys.path.append('scenes')
-import topologiesOnThreePoints as totp
+import squareCircleTriangle as totp
 
 """ PARAMETERS """
 isRecording = False
