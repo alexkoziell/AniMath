@@ -5,10 +5,16 @@ import sys
 sys.path.append('../')
 import colors
 
-class Shape():
+class Geometry():
+    """ Base class for objects defined by sets of vertices. """
 
+    def __init__(self, vertices, color=colors.WHITE):
+        # vertices are a numpy array where each row is the coordinates of one vertex
+        self.vertices = np.asarray(vertices, dtype=np.float64)
+        self.color = color
+    
     """ RENDERING """
-    def draw(self):
+    def draw(self, drawType):
         # uses pyglet to render a GL_LINE_LOOP through the vertices
 
         try:
@@ -16,12 +22,12 @@ class Shape():
             gl_vertices = tuple(int_vertices.flatten().tolist())
             n_vertices = int(len(gl_vertices)/2)
 
-            polygon_vertices = pyglet.graphics.vertex_list(
+            vertex_list = pyglet.graphics.vertex_list(
             n_vertices,
             ('v2i', gl_vertices),
             ('c3B', self.color*n_vertices)
             )
-            polygon_vertices.draw(pyglet.gl.GL_LINE_LOOP)
+            vertex_list.draw(drawType)
         except:
             pass
 
@@ -60,19 +66,25 @@ class Shape():
                            [np.sin(angle), np.cos(angle)]])
 
 
-class Polygon(Shape):
+class Points(Geometry):
+    """ Simple set of points. """
+    def draw(self):
+        super().draw(pyglet.gl.GL_POINTS)
 
+class Shape(Geometry):
+    """ Base class for shapes. """
+    def draw(self, filled=False):
+        super().draw(pyglet.gl.GL_POLYGON if filled else pyglet.gl.GL_LINE_LOOP)
+
+class Polygon(Shape):
     def __init__(self, vertices, color=colors.WHITE):
-        # vertices are a numpy array where each row is the coordinates of one vertex
-        self.vertices = np.asarray(vertices, dtype=np.float64)
+        super().__init__(vertices, color)
         # average coordinate gives center
         self.center = np.average(vertices, axis=0)
 
-        self.color = color
-
 class Ellipse(Shape):
 
-    def __init__(self, center, major, minor, color=colors.WHITE, n_vertices=100):
+    def __init__(self, center, major, minor, n_vertices=100, color=colors.WHITE):
         self.center = np.asarray(center, dtype=np.float64)
 
         # n_vertices determines the number of lines used to render the ellipse
@@ -83,8 +95,7 @@ class Ellipse(Shape):
 
         self.color = color
 
-
 class Circle(Ellipse):
-
+    """ Subclass of ellipse. """
     def __init__(self, center, radius, color=colors.WHITE, n_vertices=100):
         super().__init__(center, radius, radius, color=color, n_vertices=n_vertices)

@@ -29,6 +29,7 @@ def setupAnimation():
 def setupPyglet():
     window = pyglet.window.Window(width=width, height=height)
     pygl.glClearColor(0.05, 0.04, 0.04, 1)
+    pygl.glPointSize(10)
     pygl.glLineWidth(5)
     pygl.glEnable(pygl.GL_BLEND)
     pygl.glBlendFunc(pygl.GL_SRC_ALPHA, pygl.GL_ONE_MINUS_SRC_ALPHA)
