@@ -10,18 +10,23 @@ import shape
 
 def setupScene(width, height):
     # Some shapes
-    triangle_vertices = np.array([[width/3,height/3],[2*width/3,height/3],[width/2,2*height/3]], dtype=np.float64)
+    triangle_vertices = [[width/3,height/3],
+                         [2*width/3,height/3],
+                         [width/2,2*height/3]]
     global my_triangle
-    my_triangle = shape.Polygon(triangle_vertices, color=colors.WHITE)
+    my_triangle = shape.Polygon(triangle_vertices)
     my_triangle.translate(np.asarray([0, 100]))
 
-    center = np.asarray([width/2, 5*height/7], dtype=np.float64)
+    center = [width/2, 5*height/7]
     global my_circle
-    my_circle = shape.Circle(my_triangle.center, color=colors.WHITE, radius=height/5-10)
+    my_circle = shape.Circle(my_triangle.center, radius=height/5-10)
 
-    square_vertices = np.array([[4*width/7,height/5],[4*width/7+width/6,height/5],[4*width/7+width/6,height/5+width/6],[4*width/7,height/5+width/6]], dtype=np.float64)
+    square_vertices = [[4*width/7,height/5],
+                       [4*width/7+width/6,height/5],
+                       [4*width/7+width/6,height/5+width/6],
+                       [4*width/7,height/5+width/6]]
     global my_square
-    my_square = shape.Polygon(square_vertices, color=colors.WHITE)
+    my_square = shape.Polygon(square_vertices)
     my_square.translate(my_triangle.center-my_square.center)
     my_square.scale(1.3)
 

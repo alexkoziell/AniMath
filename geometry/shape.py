@@ -64,22 +64,27 @@ class Polygon(Shape):
 
     def __init__(self, vertices, color=colors.WHITE):
         # vertices are a numpy array where each row is the coordinates of one vertex
-        self.vertices = vertices
+        self.vertices = np.asarray(vertices, dtype=np.float64)
         # average coordinate gives center
         self.center = np.average(vertices, axis=0)
 
         self.color = color
 
-class Circle(Shape):
+class Ellipse(Shape):
 
-    def __init__(self, center, radius, color=colors.WHITE, n_vertices=100):
-        self.center = center
+    def __init__(self, center, major, minor, color=colors.WHITE, n_vertices=100):
+        self.center = np.asarray(center, dtype=np.float64)
 
-        # n_vertices determines the number of lines used to render the circle
-        self.vertices = np.asarray([], dtype=np.float64)
-        for angle in np.linspace(0, 2*np.pi, n_vertices):
-            point = center + radius*np.asarray([np.cos(angle), np.sin(angle)])
-            self.vertices = np.append(self.vertices, point)
-        self.vertices = self.vertices.reshape(n_vertices, 2)
+        # n_vertices determines the number of lines used to render the ellipse
+        self.vertices = np.empty((n_vertices, 2), dtype=np.float64)
+        for row, angle in enumerate(np.linspace(0, 2*np.pi, n_vertices)):
+            point = center + np.asarray([major*np.cos(angle), minor*np.sin(angle)])
+            self.vertices[row] = point
 
         self.color = color
+
+
+class Circle(Ellipse):
+
+    def __init__(self, center, radius, color=colors.WHITE, n_vertices=100):
+        super().__init__(center, radius, radius, color=color, n_vertices=n_vertices)

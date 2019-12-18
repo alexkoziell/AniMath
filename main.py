@@ -13,7 +13,7 @@ import interpolate, shape
 sys.path.append('image')
 import image
 sys.path.append('scenes')
-import squareCircleTriangle
+import topologiesOnThreePoints as totp
 
 """ PARAMETERS """
 isRecording = False
@@ -23,7 +23,7 @@ elapsedTime = 0
 
 """ ANIMATION """
 def setupAnimation():
-    squareCircleTriangle.setupScene(width, height)
+    totp.setupScene(width, height)
 
 """ PYGLET """
 def setupPyglet():
@@ -37,7 +37,7 @@ def setupPyglet():
         window.clear()
 
         global elapsedTime
-        squareCircleTriangle.drawScene(elapsedTime)
+        totp.drawScene(elapsedTime)
         if isRecording:
             write_to_video()
 
