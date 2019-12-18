@@ -12,42 +12,24 @@ import colors
 import interpolate, shape
 sys.path.append('image')
 import image
+sys.path.append('scenes')
+import squareCircleTriangle
 
 """ PARAMETERS """
 isRecording = False
 outfile = None
-width, height = 1080, 720
+width, height = 1920, 1080
 elapsedTime = 0
 
 """ ANIMATION """
 def setupAnimation():
-    # Some shapes
-    triangle_vertices = np.array([[200,200],[400,200],[300,341]], dtype=np.float64)
-    # triangle_color
-    global my_triangle
-    my_triangle = shape.Polygon(triangle_vertices, color=colors.RED)
-
-    center = np.asarray([500, 500], dtype=np.float64)
-    global my_circle
-    my_circle = shape.Circle(center, color=colors.GREEN, radius=100)
-
-    square_vertices = np.array([[665,195],[805,195],[805,335],[665,335]], dtype=np.float64)
-    global my_square
-    my_square = shape.Polygon(square_vertices, color=colors.BLUE)
-
-    # Animate them!
-    animation.Morph(1, 4,   my_triangle, my_circle)
-    animation.Morph(4, 6.5, my_circle,  my_square)
-
-    # Some text
-    global continuity
-    continuity = image.Image('image/continuity.png', x=50, y=height-150, start=1, end=6.5)
+    squareCircleTriangle.setupScene(width, height)
 
 """ PYGLET """
 def setupPyglet():
     window = pyglet.window.Window(width=width, height=height)
     pygl.glClearColor(0.05, 0.04, 0.04, 1)
-    pygl.glLineWidth(3)
+    pygl.glLineWidth(5)
     pygl.glEnable(pygl.GL_BLEND)
     pygl.glBlendFunc(pygl.GL_SRC_ALPHA, pygl.GL_ONE_MINUS_SRC_ALPHA)
 
@@ -55,31 +37,22 @@ def setupPyglet():
         window.clear()
 
         global elapsedTime
-        if elapsedTime < 4:
-            my_triangle.draw()
-        elif 4 < elapsedTime < 6.6:
-            my_circle.draw()        
-        else:
-            my_square.draw()
-        
-        continuity.sprite.draw()
+        squareCircleTriangle.drawScene(elapsedTime)
+        if isRecording:
+            write_to_video()
 
         elapsedTime += dt
 
-    def write_to_video(dt):
+    def write_to_video():
         buffer = ( pygl.GLubyte * (3*window.width*window.height) )(0)
         pygl.glReadPixels(0, 0, width, height, pygl.GL_RGB, 
                             pygl.GL_UNSIGNED_BYTE, buffer)
         pipe.stdin.write(buffer)
-    
-    if isRecording:
-        pyglet.clock.schedule_interval(write_to_video, 1/24.0)
 
     pyglet.clock.schedule_interval(on_draw, 1/24) # to sync animation with video
 
 
-
-""" SETUP """
+""" ARGPARSE AND RECORDING """
 parser = argparse.ArgumentParser(description="Create a Math Animation.")
 parser.add_argument('-o', '--outfile', type=str )
 
@@ -94,7 +67,7 @@ def setupFFMPEG(width, height, fileName):
             '-s', '%dx%d' %(width, height), # size of one frame
             '-pix_fmt', 'rgb24',
             '-r', '24', # frames per second
-            '-i', '-', # The imput comes from a pipe
+            '-i', '-', # The input comes from a pipe
             '-vf', 'transpose=cclock_flip,transpose=cclock', # flips openGl output the right way up
             '-an', # Tells FFMPEG not to expect any audio
             '-vcodec', 'mpeg4',
@@ -116,7 +89,7 @@ def askToContinue():
         askToContinue()
 
 
-
+""" RUN """
 if __name__ == "__main__":
     args = parser.parse_args()
     outfile = args.outfile
