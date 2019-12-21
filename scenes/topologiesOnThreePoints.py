@@ -7,6 +7,8 @@ import animation
 import colors
 sys.path.append('../geometry')
 import shape
+sys.path.append('../image')
+import image
 
 def setupScene(width, height):
 
@@ -28,13 +30,17 @@ def setupScene(width, height):
     my_vertices = shape.Points([centerA,
                                 centerB,
                                 centerC])
+
+    global definition1
+    definition1 = image.Image('image/topology1.png', width/12, 10*height/12, 1, 7)
     
-    fadeInX   = animation.fadeIn(1.0, 2.0, X)
-    fadeOutAB = animation.fadeOut(3, 5, AB)
+    fadeInX   = animation.fadeIn(6, 10, X)
+    # fadeOutAB = animation.fadeOut(3, 5, AB)
 
 def drawScene(elapsedTime):
-    for shape in [X, A, B, C, AB, BC]:
+    for shape in [X,]:#A, B, C, AB, BC]:
         shape.draw()
 
-    print(colors.WHITE)
-    my_vertices.draw()
+    definition1.sprite.draw()
+    if elapsedTime < 3 or elapsedTime > 5:
+        my_vertices.draw()
