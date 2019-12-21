@@ -15,18 +15,20 @@ class Geometry():
     
     """ RENDERING """
     def draw(self, drawType):
-        try:
-            int_vertices = self.vertices.astype(int)
-            gl_vertices = tuple(int_vertices.flatten().tolist())
-            n_vertices = int(len(gl_vertices)/2)
+        int_vertices = self.vertices.astype(int)
+        gl_vertices = tuple(int_vertices.flatten().tolist())
+        n_vertices = int(len(gl_vertices)/2)
+        int_colors = tuple(map(int, self.color))*n_vertices
 
-            vertex_list = pyglet.graphics.draw(
+        try:
+            pyglet.graphics.draw(
             n_vertices,
             drawType,
             ('v2i', gl_vertices),
-            ('c3B', self.color*n_vertices)
+            ('c4B', int_colors)
             )
-        except:
+        except Exception as exception:
+            print(exception)
             pass
 
     """ TRANFORMATIONS """

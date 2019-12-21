@@ -12,11 +12,12 @@ class Animation():
         self.end   = end
         self.duration = end-start
         self.toCompletion = 1.0 # fraction left to completion
+        self.alpha = 1/(24*self.duration)
         pyglet.clock.schedule_once(self.begin, start)
         pyglet.clock.schedule_once(self.stop, end)
 
     def animateFunc(self, dt):
-        pass
+        self.toCompletion -= self.alpha
 
     def begin(self, dt):
         pyglet.clock.schedule_interval(self.animateFunc, 1/24)
@@ -31,16 +32,43 @@ class Morph(Animation):
         self.dstShape = dstShape
         self.vertexPaths = interpolate.shapeInterpolation(srcShape, dstShape)\
                          + interpolate.centerInterpolation(srcShape, dstShape)
-        self.alpha = 1/(24*self.duration)
 
     def animateFunc(self, dt):
         interpolate.interpolateVertices(self.srcShape.vertices, self.vertexPaths, self.alpha)
-        self.toCompletion -= self.alpha
+        super().animateFunc(dt)
 
     def stop(self, dt):
         self.srcShape.vertices = None
         self.srcShape.center   = None
         self.srcShape.color    = None
         super().stop(dt)
-
+class fadeIn(Animation):
+    def __init__(self, start, end, shape: Shape):
+        super().__init__(start, end)
+        self.shape = shape
+        self.targetcolor = deepcopy(self.shape.color)
+        self.shape.color = self.targetcolor
+        self.shape.color[3] = 0
     
+    def animateFunc(self, dt):
+        self.shape.color[3] += 255*self.alpha
+        super().animateFunc(dt)
+
+    def stop(self, dt):
+        self.shape.color = self.targetcolor
+        super().stop(dt)
+
+class fadeOut(Animation):
+    def __init__(self, start, end, shape: Shape):
+        super().__init__(start, end)
+        self.shape = shape
+        self.shape.color = deepcopy(self.shape.color)
+        self.startTransparency = self.shape.color[3]
+    
+    def animateFunc(self, dt):
+        self.shape.color[3] -= self.startTransparency*self.alpha
+        super().animateFunc(dt)
+
+    def stop(self, dt):
+        self.shape.color[3] = 0
+        super().stop(dt)
