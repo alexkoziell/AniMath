@@ -31,16 +31,26 @@ def setupScene(width, height):
                                 centerB,
                                 centerC])
 
-    global definition1
-    definition1 = image.Image('image/topology1.png', width/12, 10*height/12, 1, 7)
+    global definition1, definition2a, definition2b
+    definition1 = image.Image('image/topology1.png',  width/12, 10*height/12, 1, 8)
+    definition2a = image.Image('image/topology2c.png', width/12, 10*height/12, 10, 22)
+    definition2b = image.Image('image/topology2d.png', 5*width/12, 8*height/12, 12, 22)
     
-    fadeInX   = animation.fadeIn(6, 10, X)
-    # fadeOutAB = animation.fadeOut(3, 5, AB)
+    fadeInX   = animation.fadeIn(3, 5, X)
+    fadeOutX  = animation.fadeOut(5, 6, X)
+
+    fadeinA, fadeOutA = animation.fadeIn(12, 14, A), animation.fadeOut(22,24, A)
+    fadeinB, fadeOutB = animation.fadeIn(12.5, 14, B), animation.fadeOut(22,24, B)
+
+    fadeinAB, fadeOutAB = animation.fadeIn(16, 18, AB), animation.fadeOut(22,24, AB)
 
 def drawScene(elapsedTime):
-    for shape in [X,]:#A, B, C, AB, BC]:
+    for shape in [X, A, B, AB]: #C, AB, BC]:
         shape.draw()
 
     definition1.sprite.draw()
-    if elapsedTime < 3 or elapsedTime > 5:
+    definition2a.sprite.draw()
+    definition2b.sprite.draw()
+
+    if elapsedTime < 7 or elapsedTime > 8.5:
         my_vertices.draw()

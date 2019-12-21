@@ -46,8 +46,7 @@ class fadeIn(Animation):
     def __init__(self, start, end, shape: Shape):
         super().__init__(start, end)
         self.shape = shape
-        self.targetcolor = deepcopy(self.shape.color)
-        self.shape.color = self.targetcolor
+        self.shape.color = deepcopy(self.shape.color)
         self.shape.color[3] = 0
     
     def animateFunc(self, dt):
@@ -55,7 +54,7 @@ class fadeIn(Animation):
         super().animateFunc(dt)
 
     def stop(self, dt):
-        self.shape.color = self.targetcolor
+        self.shape.color[3] = 255
         super().stop(dt)
 
 class fadeOut(Animation):
@@ -63,7 +62,7 @@ class fadeOut(Animation):
         super().__init__(start, end)
         self.shape = shape
         self.shape.color = deepcopy(self.shape.color)
-        self.startTransparency = self.shape.color[3]
+        self.startTransparency = 255
     
     def animateFunc(self, dt):
         self.shape.color[3] -= self.startTransparency*self.alpha
