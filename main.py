@@ -50,12 +50,13 @@ def setupPyglet():
                             pygl.GL_UNSIGNED_BYTE, buffer)
         pipe.stdin.write(buffer)
 
-    pyglet.clock.schedule_interval(on_draw, 1/24) # to sync animation with video
+    pyglet.clock.schedule_interval(on_draw, 1/24)
 
 
 """ ARGPARSE AND RECORDING """
 parser = argparse.ArgumentParser(description="Create a Math Animation.")
 parser.add_argument('-o', '--outfile', type=str )
+parser.add_argument('-q', '--quality', type=str )
 
 def setupFFMPEG(width, height, fileName):
     FFMPEG_BIN = 'ffmpeg'
@@ -94,6 +95,14 @@ def askToContinue():
 if __name__ == "__main__":
     args = parser.parse_args()
     outfile = args.outfile
+    quality = args.quality
+
+    if quality == 'l':
+        width, height = 480, 360
+    elif quality == 'm':
+        width, height = 1080, 720
+    else:
+        width, height = 1920, 1080 
 
     if outfile is not None:
         isRecording = setupFFMPEG(width, height, outfile)
