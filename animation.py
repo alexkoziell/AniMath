@@ -26,21 +26,29 @@ class Animation():
         pyglet.clock.unschedule(self.animateFunc)
         
 class Morph(Animation):
-    def __init__(self, start, end, srcShape: Shape, dstShape: Shape):
+    def __init__(self, start, end, srcShape: Shape, dstShape: Shape, keepObjectInstance=True):
         super().__init__(start, end)
         self.srcShape = srcShape
         self.dstShape = dstShape
         self.vertexPaths = interpolate.shapeInterpolation(srcShape, dstShape)\
                          + interpolate.centerInterpolation(srcShape, dstShape)
+        
+        self.keepObjectInstance = keepObjectInstance
 
     def animateFunc(self, dt):
         interpolate.interpolateVertices(self.srcShape.vertices, self.vertexPaths, self.alpha)
         super().animateFunc(dt)
 
     def stop(self, dt):
-        self.srcShape.vertices = None
-        self.srcShape.center   = None
-        self.srcShape.color    = None
+        if not self.keepObjectInstance:
+            self.srcShape.vertices = None
+            self.srcShape.center   = None
+            self.srcShape.color    = None
+        else:
+            self.srcShape.vertices = self.dstShape.vertices
+            self.srcShape.center   = self.dstShape.center
+            self.srcShape.color    = self.dstShape.color
+
         super().stop(dt)
 class fadeIn(Animation):
     def __init__(self, start, end, shape: Shape):

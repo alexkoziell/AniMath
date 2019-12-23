@@ -13,7 +13,7 @@ import interpolate, shape
 sys.path.append('image')
 import image
 sys.path.append('scenes')
-import topologiesOnThreePoints as totp
+import doubleMorph as outputScene
 
 """ PARAMETERS """
 isRecording = False
@@ -23,7 +23,7 @@ elapsedTime = 0
 
 """ ANIMATION """
 def setupAnimation():
-    totp.setupScene(width, height)
+    outputScene.setupScene(width, height)
 
 """ PYGLET """
 def setupPyglet():
@@ -38,7 +38,7 @@ def setupPyglet():
         window.clear()
 
         global elapsedTime
-        totp.drawScene(elapsedTime)
+        outputScene.drawScene(elapsedTime)
         if isRecording:
             write_to_video()
 
