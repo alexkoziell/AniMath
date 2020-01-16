@@ -99,3 +99,18 @@ class Circle(Ellipse):
     """ Subclass of ellipse. """
     def __init__(self, center, radius, color=colors.WHITE, n_vertices=100):
         super().__init__(center, radius, radius, color=color, n_vertices=n_vertices)
+
+class Boomerang(Shape):
+    # odd parametric curve with 'boomerang' shape... useful for the open set {A, C} in the 'topologies on three points' videos
+
+    def __init__(self, center, width, height, spread, n_vertices=100, color=colors.WHITE):
+        self.center = np.asarray(center, dtype=np.float64)
+
+        # n_vertices determines the number of lines used to render the ellipse
+        self.vertices = np.empty((n_vertices, 2), dtype=np.float64)
+        for row, angle in enumerate(np.linspace(0, 2*np.pi, n_vertices)):
+            point = center + np.asarray([width*(np.sin(angle)-np.cos(angle)), # x coordinate
+                                         height*np.sin(2*angle)-spread*(np.sin(angle)+np.cos(angle))]) # y coordinate
+            self.vertices[row] = point
+
+        self.color = color

@@ -15,6 +15,9 @@ def setupScene(width, height):
     centerA = np.array([width/4,   height/2])
     centerB = np.array([width/2,   height/2])
     centerC = np.array([3*width/4, height/2])
+
+    global AC
+    AC = shape.Boomerang(centerB+np.asarray([0,100]), 390, 175, 75, color=[235, 235, 235, 235])
     
     global X, A, B, C, AB, BC
     X  = shape.Ellipse(centerB, width/3, height/5, color=colors.WHITE)
@@ -34,8 +37,8 @@ def setupScene(width, height):
     global redAB, redB
     redB  = shape.Circle(centerB, height/13, color=colors.RED)
     redAB = shape.Ellipse((centerA+centerB)/2, width/5, height/8, color=colors.RED)
-    fadeinAB = animation.fadeIn(14, 16, redAB)
-    fadeinB  = animation.fadeIn(24, 26, redB )
+    fadeinAB = animation.fadeIn(15, 17, redAB)
+    fadeinB  = animation.fadeIn(25, 27, redB )
 
 
 def drawScene(elapsedTime):
@@ -67,12 +70,19 @@ def drawScene(elapsedTime):
         C.draw()
         AB.draw()
         BC.draw()
-
-    if 9*dt < elapsedTime < 19*dt:
+    if 8*dt < elapsedTime < 10*dt: # discrete topology
+        A.draw()
+        B.draw()
+        C.draw()
+        AB.draw()
+        BC.draw()
+        AC.draw()
+    # counterexamples
+    if 10*dt < elapsedTime < 20*dt:
         A.draw()
         B.draw()
         redAB.draw()
-    if 19*dt < elapsedTime < 29*dt:
+    if 20*dt < elapsedTime < 30*dt:
         AB.draw()
         BC.draw()
         redB.draw()
