@@ -17,13 +17,13 @@ def setupScene(width, height):
     centerC = np.array([3*width/4, height/2])
     
     global X, A, B, C, AB, BC
-    X  = shape.Ellipse(centerB, width/3, height/5, color=colors.WHITE)
+    X  = shape.Ellipse(centerB, width/3, height/5, color=colors.BLUE)
     
     A  = shape.Circle(centerA, height/13)
     B  = shape.Circle(centerB, height/13)
     C  = shape.Circle(centerC, height/13)
 
-    AB = shape.Ellipse((centerA+centerB)/2, width/5, height/8, color=colors.WHITE)
+    AB = shape.Ellipse((centerA+centerB)/2, width/5, height/8, color=colors.GREEN)
     BC = shape.Ellipse((centerB+centerC)/2, width/5, height/8, color=colors.WHITE)
 
     global my_vertices
@@ -53,8 +53,12 @@ def setupScene(width, height):
     fadeinB_2, fadeOutB_2 = animation.fadeIn(30, 32, B), animation.fadeOut(35,37, B)
 
 def drawScene(elapsedTime):
-    for shape in [X, A, B, AB, BC]: #C, AB
+    for shape in [X, A, B, AB, BC]:
         shape.draw()
+
+    if 24 < elapsedTime < 25:
+        AB.color = colors.WHITE
+        B.color  = colors.RED
 
     definition1.sprite.draw()
     definition2a.sprite.draw()

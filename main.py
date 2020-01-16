@@ -13,7 +13,7 @@ import interpolate, shape
 sys.path.append('image')
 import image
 sys.path.append('scenes')
-import numberLine as outputScene
+import threePointExampleTopologies as outputScene
 
 """ PARAMETERS """
 isRecording = False
