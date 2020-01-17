@@ -2,10 +2,17 @@ import numpy as np
 import pyglet
 import sys
 sys.path.append('../')
+sys.path.append('../image')
 import colors
+import image
 
 class NumberLine():
     def __init__(self, offset=0, subdivisions=11, start=-5, end=5, color=colors.WHITE):
+        
+        # for plotting intervals
+        self.start = start
+        self.end = end
+
         (width, height) = pyglet.canvas.get_display().get_windows()[0].get_size()
         self.endVertices = np.asarray([0,     height/2+offset,
                                        width, height/2+offset])
@@ -56,3 +63,23 @@ class NumberLine():
         except Exception as exception:
             print(exception)
             pass
+
+class Interval():
+
+    def __init__(self, endPoints: list, parentLine: NumberLine, aOpen: bool, bOpen: bool):
+        # interval a to b
+        a = endPoints[0]
+        b = endPoints[1]
+
+        lineWidth   = parentLine.end - parentLine.start
+        screenWidth = parentLine.endVertices[2]
+        resolution  = screenWidth/lineWidth
+
+        vertPosition = parentLine.endVertices[3]-40
+        aPosition, bPosition = (a-parentLine.start)*resolution, (b-parentLine.start)*resolution
+        bPosition -= 20 if bOpen else 13
+
+        self.aBracket = image.Image('image/leftOpenBracket.png' if aOpen else 'image/leftClosedBracket.png', x=aPosition, y=vertPosition)
+        self.bBracket = image.Image('image/rightOpenBracket.png' if bOpen else 'image/rightClosedBracket.png', x=bPosition, y=vertPosition)
+        
+        
