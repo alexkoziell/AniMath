@@ -25,6 +25,7 @@ class NumberLine():
             label = pyglet.text.Label('%.2f' % labelNumber,
                                       font_name='Times New Roman',
                                       font_size=28,
+                                      color = self.color,
                                       x=self.markerPositions[idx]-30, y=height/2+offset-50)
             self.labels.append(label)
 
@@ -66,7 +67,7 @@ class NumberLine():
 
 class Interval():
 
-    def __init__(self, endPoints: list, parentLine: NumberLine, aOpen: bool, bOpen: bool):
+    def __init__(self, endPoints: list, parentLine: NumberLine, aOpen: bool, bOpen: bool, color=colors.WHITE):
         # interval a to b
         a = endPoints[0]
         b = endPoints[1]
@@ -82,4 +83,6 @@ class Interval():
         self.aBracket = image.Image('image/leftOpenBracket.png' if aOpen else 'image/leftClosedBracket.png', x=aPosition, y=vertPosition)
         self.bBracket = image.Image('image/rightOpenBracket.png' if bOpen else 'image/rightClosedBracket.png', x=bPosition, y=vertPosition)
         
+        self.color = color[:3]
+        self.aBracket.sprite.color = self.bBracket.sprite.color = self.color
         

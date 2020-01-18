@@ -12,12 +12,12 @@ import image
 
 def setupScene(width, height):
     global myNumberLine
-    myNumberLine = lines.NumberLine(color=colors.RED)
+    myNumberLine = lines.NumberLine()
 
     global openInterval, closedInterval, clopenInterval
-    openInterval = lines.Interval([-3,4], myNumberLine, True, True)
-    closedInterval = lines.Interval([-2,3], myNumberLine, False, False)
-    clopenInterval = lines.Interval([-1,1], myNumberLine, False, True)
+    openInterval = lines.Interval([-2,4], myNumberLine, True, True, color=colors.RED)
+    closedInterval = lines.Interval([-3,1], myNumberLine, False, False, color=colors.GREEN)
+    clopenInterval = lines.Interval([-1,2], myNumberLine, False, True, color=colors.BLUE)
 
 def drawScene(elapsedTime):
     myNumberLine.draw()
