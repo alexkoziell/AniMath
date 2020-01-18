@@ -5,6 +5,9 @@ import scipy.optimize
 from shape import Shape
 import munkres
 
+def linearInterpolation(srcPos, dstPos):
+    return dstPos-srcPos
+
 def centerInterpolation(shape1: Shape, shape2: Shape, alpha=1):
     """ Superimposes shape1 onto shape 2, without rotation or scaling. """
     return shape2.center-shape1.center
@@ -96,3 +99,9 @@ def addVertices(shape: Shape, N: int):
                     break
     
     shape.vertices = shape.vertices.reshape(numSides+N, 2)
+
+def spriteInterpolation(sprite, trajectory, alpha=1):
+    (x, y) = sprite.position
+    x += trajectory[0]*alpha
+    y += trajectory[1]*alpha
+    sprite.update(x=x, y=y)

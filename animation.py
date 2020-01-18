@@ -79,3 +79,18 @@ class fadeOut(Animation):
     def stop(self, dt):
         self.shape.color[3] = 0
         super().stop(dt)
+
+class moveSprite(Animation):
+    def __init__(self, start, end, sprite, trajectory):
+        super().__init__(start, end)
+        self.sprite = sprite
+        self.trajectory = trajectory
+        self.endPos = (sprite.position[0]+trajectory[0], sprite.position[1]+trajectory[1])
+
+    def animateFunc(self, dt):
+        interpolate.spriteInterpolation(self.sprite, self.trajectory, self.alpha)
+        super().animateFunc(dt)
+
+    def stop(self, dt):
+        self.sprite.update(x=self.endPos[0], y=self.endPos[1])
+        super().stop(dt)
